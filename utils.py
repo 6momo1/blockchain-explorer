@@ -1,15 +1,15 @@
 
 from typing import Tuple, Optional, Callable, List, Iterable
 import logging
-logger = logging.getLogger(__name__)
 import time
 from eth_abi.codec import ABICodec
 from web3._utils.filters import construct_event_filter_params
 from web3._utils.events import get_event_data
 
+logger = logging.getLogger(__name__)
 
 
-def _retry_web3_call(func, start_block, end_block, retries, delay) -> Tuple[int, list]:
+def _retry_web3_call(func, start_block, end_block, retries, delay,logger) -> Tuple[int, list]:
     """A custom retry loop to throttle down block range.
 
     If our JSON-RPC server cannot serve all incoming `eth_getLogs` in a single request,
@@ -55,7 +55,8 @@ def _fetch_events_for_all_contracts(
         event,
         argument_filters: dict,
         from_block: int,
-        to_block: int) -> Iterable:
+        to_block: int
+        ) -> Iterable:
     """Get events using eth_getLogs API.
 
     This method is detached from any contract instance.

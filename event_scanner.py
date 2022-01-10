@@ -1,24 +1,10 @@
-from web3 import Web3
-# from web3.contract import Contract
-
-# from event_scanner_state import EventScannerState
 from typing import Tuple, Optional, Callable, List, Iterable
 import datetime
-# from web3.exceptions import BlockNotFound
-
-# from web3 import Web3
-from web3.contract import Contract
-# from web3.datastructures import AttributeDict
-from web3.exceptions import BlockNotFound
-# from eth_abi.codec import ABICodec
-
-# # Currently this method is not exposed over official web3 API,
-# # but we need it to construct eth_getLogs parameters
-# from web3._utils.filters import construct_event_filter_params
-# from web3._utils.events import get_event_data
-
 import logging
 import time
+from web3 import Web3
+from web3.contract import Contract
+from web3.exceptions import BlockNotFound
 
 logger = logging.getLogger(__name__)
 

@@ -652,5 +652,5 @@ if __name__ == "__main__":
 
 
     api_url = os.getenv('API_URL')
-    token_name = "year"
+    token_name = "testyear"
     run(api_url, ADDRESS,  token_name)

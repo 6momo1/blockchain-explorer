@@ -8,3 +8,13 @@ export async function getBlockTimestamp(web3: Web3, blockNum):Promise<Number|Str
         return null
     }
 }
+
+
+const getCurrentBlockNumber = async (): Promise<number> => {
+    let bNumber = -1
+    await web3.eth.getBlockNumber()
+        .then( res => {
+            res = bNumber
+        })
+    return bNumber
+}

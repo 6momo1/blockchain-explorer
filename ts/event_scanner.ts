@@ -2,7 +2,7 @@
 import Web3 from 'web3';
 import dotenv from 'dotenv'
 import { ProgressBar } from "./progressBar"
-import {ERC20ABI, UNIABI} from "./abis"
+import { ERC20ABI, UNIABI } from "./abis"
 import { AbiItem } from 'web3-utils'
 dotenv.config()
 import { SwapEvent } from './types.js';
@@ -15,24 +15,27 @@ file.on('error', function (err) {
 });
 
 const args = process.argv.slice(2)
+const chainSelected = args[0].toLowerCase()
 const fromBlock = parseInt(args[2])
 const toBlock = parseInt(args[3])
 const TOKEN_ADDRESS = args[1]
-const BLOCK_STEP = args[4]? parseInt(args[4]) : 10;
-const EventType = args[5]? args[5] : "Transfer"
+const BLOCK_STEP = args[4] ? parseInt(args[4]) : 10;
+const EventType = args[5] ? args[5] : "Transfer"
 
 let web3: Web3
-switch (args[0].toLowerCase()) {
-    case "bsc":
-        web3 = process.env["BSC_ENDPOINT_URL_moralis"]? new Web3(process.env["BSC_ENDPOINT_URL_moralis"]): undefined;
-    case "eth":
-        web3 = process.env["ETH_ENDPOINT_URL"]? new Web3(process.env["ETH_ENDPOINT_URL"]): undefined;
+if (chainSelected == "bsc") {
+    // web3 = process.env["BSC_ENDPOINT_URL_moralis"]? new Web3(process.env["BSC_ENDPOINT_URL_moralis"]): undefined;
+    // web3 = process.env["BSC_ENDPOINT_URL_ankr"]? new Web3(process.env["BSC_ENDPOINT_URL_ankr"]): undefined;
+    web3 = process.env["BSC_ENDPOINT_URL_1"] ? new Web3(process.env["BSC_ENDPOINT_URL_1"]) : undefined;
+}
+else if (chainSelected == "eth") {
+    web3 = process.env["ETH_ENDPOINT_URL"]? new Web3(process.env["ETH_ENDPOINT_URL"]): undefined;
 }
 
 const myContract = new web3.eth.Contract(UNIABI as AbiItem[], TOKEN_ADDRESS);
 
 
-async function scan(fromBlock:number, lastBlock:number, BLOCK_STEP=10, eventType:string): Promise<SwapEvent[]> {
+async function scan(fromBlock: number, lastBlock: number, BLOCK_STEP = 10, eventType="allEvents"): Promise<SwapEvent[]> {
 
     console.log("Scanning Events...")
 
@@ -64,26 +67,18 @@ async function scan(fromBlock:number, lastBlock:number, BLOCK_STEP=10, eventType
 }
 
 
-const main = async () => {
 
-    // get block number
-    await web3.eth.getBlockNumber((error, blockNumber) => {
-        if(!error){
-            console.log(blockNumber);
-        }else{
-            console.log(error);
-        }
-    });
+const main = async () => {
 
     // scan for events
     await scan(fromBlock, toBlock, BLOCK_STEP, EventType)
-        .then( res => {
-            res.forEach( event => {
+        .then(res => {
+            res.forEach(event => {
                 // console.log(event.transactionHash, event.raw.data, event.raw.topics);
-                console.log(event.returnValues);
+                console.log(event)
+                // console.log(event.returnValues);
             })
         })
-
     file.end()
 }
 

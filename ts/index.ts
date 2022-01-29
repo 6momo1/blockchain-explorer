@@ -71,11 +71,11 @@ const transactionHashTest = async () => {
 const loggerTest = (logger: Logger) => {
     logger.debug("Debugging", {"obj":"debug"})
     logger.debug("Debugging")
-    logger.info("infoing")
+    logger.info("infoing", {asss:"asdfad"})
 }
 
 const main = async () => {
-    const logger = new Logger()
+    const logger = new Logger("debug")
     const progressBar = new ProgressBar()
     loggerTest(logger)
     // await scanTest()

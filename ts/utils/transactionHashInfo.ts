@@ -7,7 +7,7 @@ export const transactionHashInfo = async (web3: Web3, transactionHash: string): 
     return res
 }
 
-export const transactionHashSender = async (web3: Web3, transactionHash: string): Promise<String> => {
+export const transactionHashSender = async (web3: Web3, transactionHash: string): Promise<string> => {
     let res = await web3.eth.getTransaction(transactionHash)
     return res.from
 }

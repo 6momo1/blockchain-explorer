@@ -8,7 +8,18 @@ export interface SwapEvent {
   transactionIndex: number,
   id: string,
   returnValues: {
-    Result: SwapResult
+    '0': string,
+    '1': string,
+    '2': string,
+    '3': string,
+    '4': string,
+    '5': string,
+    sender: string,
+    amount0In: string,
+    amount1In: string,
+    amount0Out: string,
+    amount1Out: string,
+    to: string
   },
   event: string,
   signature: any,
@@ -16,6 +27,17 @@ export interface SwapEvent {
     data: string,
     topics: any[]
   }
+}
+
+export interface Swap {
+  block?:number,
+  time?: Date,
+  sender: string,
+  transactionHash: string,
+  amount0In?: string,
+  amount1In: string,
+  amount0Out: string,
+  amount1Out: string
 }
 
 export interface SwapResult {

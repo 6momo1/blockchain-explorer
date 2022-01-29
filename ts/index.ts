@@ -6,11 +6,12 @@ import { transactionHashInfo, transactionHashSender } from "./utils/transactionH
 import { Transaction } from "web3-eth"
 import { Logger } from "./logger"
 import { ProgressBar } from "./progressBar"
+import { Swap } from "./types"
 
 
 
 
-const scanTest = async (progressBar:ProgressBar) => {
+const scanTest = async (progressBar:ProgressBar, logger:Logger) => {
     const args = process.argv.slice(2)
     const chainSelected = args[0].toLowerCase()
     const fromBlock = parseInt(args[2])
@@ -57,8 +58,22 @@ const scanTest = async (progressBar:ProgressBar) => {
     for (let i = 0; i < swapEvents.length; i++) {
         const swapEvent = swapEvents[i];
         const sender = await transactionHashSender(web3, swapEvent.transactionHash)
-        console.log(sender, swapEvent.returnValues);
+        let Swap:Swap
+        try {
+            
+            Swap = {
+                sender,
+                transactionHash: swapEvent.transactionHash,
+                amount0In: swapEvent.returnValues.amount0In,
+                amount1In: swapEvent.returnValues.amount1In,
+                amount0Out: swapEvent.returnValues.amount0Out,
+                amount1Out: swapEvent.returnValues.amount1Out,
+            }
+        } catch (error) {
+            console.log(error);
+        }
         
+        logger.debug("Swap", Swap)
     }  
 }
 
@@ -77,8 +92,8 @@ const loggerTest = (logger: Logger) => {
 const main = async () => {
     const logger = new Logger("debug")
     const progressBar = new ProgressBar()
-    loggerTest(logger)
-    // await scanTest()
+    // loggerTest(logger)
+    await scanTest(progressBar, logger)
     // await transactionHashTest()
 }
 

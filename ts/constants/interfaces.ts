@@ -1,0 +1,21 @@
+interface TransactionInterface {
+    accessList: [],
+    blockHash: string,
+    blockNumber: number,
+    chainId: string,
+    from: string,
+    gas: number,
+    gasPrice: number,
+    hash: string,
+    input: string,
+    maxFeePerGas: string,
+    maxPriorityFeePerGas: string,
+    nonce: string,
+    r: string,
+    s: string,
+    to: string,
+    transactionIndex: number,
+    type: number,
+    v: number,
+    value: string
+}

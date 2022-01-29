@@ -14,23 +14,25 @@ year and eth:
 PANCAKE SWAP:
 # Spider doge: Doesn't work
 0x67606A460e12c71ce323076A17d8796e5D39e372
-npx ts-node ./event_scanner.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14425675 14425775 100 Swap
+npx ts-node ./index.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14425675 14425775 100 Swap
 # spider doge: works
 
-npx ts-node ./event_scanner.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14425575 14425775 100 
+npx ts-node ./index.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14425575 14425775 100 
 # Omi Shiba Doesnt work
 0x708abac975BCCf822E5d914195C17a50304D8a24 # Omi Shiba
-npx ts-node ./event_scanner.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14082123 14082523 100 Swap
+npx ts-node ./index.ts bsc 0x67606A460e12c71ce323076A17d8796e5D39e372 14082123 14082523 100 Swap
 
 UNISWAP:
 # YEAR uni pair: Works
 0x9A1071d17b8126679Aeca3EF152F784bca339c3A
-npx ts-node ./event_scanner.ts eth 0x9A1071d17b8126679Aeca3EF152F784bca339c3A 13911535 13912106 100 Swap
+npx ts-node ./index.ts eth 0x9A1071d17b8126679Aeca3EF152F784bca339c3A 13911535 13912106 100 Swap
 
 UNISWAP V2 Factory:
 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f
-npx ts-node ./event_scanner.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 14058716 14058723 100 PairCreated uniFactory
+npx ts-node ./index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 14058716 14058723 100 PairCreated uniFactory
 
 Battle Token:
 7e32e468fbca1bbc85736028c284968f391adbac
-npx ts-node ./event_scanner.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 13835454 13835456 100 PairCreated uniFactory
+npx ts-node ./index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 13835454 13835456 100 PairCreated uniFactory
+
+npx ts-node index eth 0x9A1071d17b8126679Aeca3EF152F784bca339c3A 13910265 13910965 100 Swap tokenExchange

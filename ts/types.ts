@@ -1,19 +1,19 @@
 export interface SwapEvent {
-  address: String,
-  blockHash: String,
+  address: string,
+  blockHash: string,
   blockNumber: number,
   logIndex: number,
   removed: Boolean,
-  transactionHash: String,
+  transactionHash: string,
   transactionIndex: number,
-  id: String,
+  id: string,
   returnValues: {
     Result: SwapResult
   },
-  event: String,
+  event: string,
   signature: any,
   raw: {
-    data: String,
+    data: string,
     topics: any[]
   }
 }

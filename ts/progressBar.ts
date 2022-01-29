@@ -6,7 +6,7 @@ import colors from 'ansi-colors'
 export class ProgressBar {
     private bar
     
-    constructor(start:number, end:number) {
+    constructor() {
 
         this.bar = new cliProgress.SingleBar({
             format: 'CLI Progress |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} Chunks || Speed: {speed}',
@@ -14,8 +14,9 @@ export class ProgressBar {
             barIncompleteChar: '\u2591',
             hideCursor: true
         });
+    }
 
-        // initialize the bar - defining payload token "speed" with the default value "N/A"
+    setLength(start:number, end:number) {
         this.bar.start(end, start, {
             speed: "N/A"
         });

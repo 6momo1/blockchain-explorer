@@ -1,43 +1,82 @@
+import { SwapEvent } from "./types/types.js";
+import { Logger } from "./logger";
+import Web3 from "web3";
+import { transactionHashCaller } from "./utils/transactionHashInfo";
+import { Swap } from "./types/types.js";
+import { getBlockTimestamp } from "./utils";
 
-import dotenv from 'dotenv'
-import { ProgressBar } from "./progressBar"
-dotenv.config()
-import { SwapEvent } from './types.js';
+export async function scanContractEvents(
+  logger: Logger,
+  fromBlock: number,
+  lastBlock: number,
+  BLOCK_STEP = 10,
+  eventType = "allEvents",
+  myContract
+): Promise<SwapEvent[]> {
+  logger.ProgressBar.setLength(0, lastBlock - fromBlock);
 
-export async function scan(progressBar: ProgressBar, fromBlock: number, lastBlock: number, BLOCK_STEP = 10, eventType = "allEvents", myContract): Promise<SwapEvent[]> {
-    
-    progressBar.setLength(0, lastBlock - fromBlock)
+  console.log("Scanning Events...");
 
-    console.log("Scanning Events...")
+  const event_list: SwapEvent[] = [];
+  let currentBlock = fromBlock;
 
-    const event_list: SwapEvent[] = []
-    let currentBlock = fromBlock
-
-
-    for (; currentBlock < lastBlock; currentBlock += BLOCK_STEP) {
-        await myContract.getPastEvents(eventType, {
-            fromBlock: currentBlock - BLOCK_STEP,
-            toBlock: currentBlock
-
-        }, function (error, events: any) {
-            if (error) {
-                progressBar.stop()
-                console.log("error encountered while fetching events")
-                return event_list
-            }
-            progressBar.increment(BLOCK_STEP)
-            events.forEach(e => {
-
-                event_list.push(e)
-            })
-        })
-    }
-    progressBar.stop()
-    return event_list
+  for (; currentBlock < lastBlock; currentBlock += BLOCK_STEP) {
+    await myContract.getPastEvents(
+      eventType,
+      {
+        // filter
+        fromBlock: currentBlock - BLOCK_STEP,
+        toBlock: currentBlock,
+      },
+      function (error, events: SwapEvent[]) {
+        if (error) {
+          logger.ProgressBar.stop();
+          logger.error("error encountered while fetching events");
+          return event_list;
+        }
+        // logger.debug("contract Events", events)
+        
+        logger.ProgressBar.increment(BLOCK_STEP);
+        events.forEach((e) => {
+          event_list.push(e);
+        });
+      }
+    );
+  }
+  logger.ProgressBar.stop();
+  return event_list;
 }
 
+export async function assembleSwap(
+  web3: Web3,
+  swapEvents: SwapEvent[]
+): Promise<Swap[]> {
+    
+  let swaps: Swap[] = [];
 
+  for (let i = 0; i < swapEvents.length; i++) {
 
+    const swapEvent = swapEvents[i];
 
+    const sender = await transactionHashCaller(web3, swapEvent.transactionHash);
+    let timestamp:number = await getBlockTimestamp(web3, swapEvent.blockNumber);
 
+    try {
+      let swap: Swap = {
+        block: swapEvent.blockNumber,
+        timestamp,
+        sender,
+        transactionHash: swapEvent.transactionHash,
+        amount0In: swapEvent.returnValues.amount0In,
+        amount1In: swapEvent.returnValues.amount1In,
+        amount0Out: swapEvent.returnValues.amount0Out,
+        amount1Out: swapEvent.returnValues.amount1Out,
+      };
+      swaps.push(swap);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+  return swaps;
+}

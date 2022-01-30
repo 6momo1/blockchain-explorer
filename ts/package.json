@@ -6,6 +6,7 @@
     "fs": "^0.0.1-security",
     "web3": "^1.7.0",
     "web3-core": "^1.7.0",
+    "web3-utils": "^1.7.0",
     "winston": "^3.5.0"
   }
 }

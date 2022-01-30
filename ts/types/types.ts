@@ -30,8 +30,8 @@ export interface SwapEvent {
 }
 
 export interface Swap {
-  block?:number,
-  time?: Date,
+  block:number,
+  timestamp: number,
   sender: string,
   transactionHash: string,
   amount0In?: string,
@@ -53,4 +53,12 @@ export interface SwapResult {
   amount0Out: string,
   amount1Out: string,
   to: string
+}
+
+export interface TokenInfo {
+  name:string,
+  decimals:number,
+  symbol:string,
+  totalSupply:number,
+  tokenAddress:string,
 }

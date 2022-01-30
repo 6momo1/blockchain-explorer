@@ -7,16 +7,16 @@ export class ProgressBar {
     private bar
     
     constructor() {
+    }
 
+    setLength(start:number, end:number) {
         this.bar = new cliProgress.SingleBar({
             format: 'CLI Progress |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} Chunks || Speed: {speed}',
             barCompleteChar: '\u2588',
             barIncompleteChar: '\u2591',
             hideCursor: true
         });
-    }
 
-    setLength(start:number, end:number) {
         this.bar.start(end, start, {
             speed: "N/A"
         });
@@ -30,8 +30,9 @@ export class ProgressBar {
     }
     end() {
         this.bar.end();
-
     }
+
+    
 }
 // Example:
 // const pb = new ProgressBar()

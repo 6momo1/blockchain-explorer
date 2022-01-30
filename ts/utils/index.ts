@@ -13,16 +13,16 @@ export async function getBlockTimestamp(web3: Web3, blockNum):Promise<any> {
         return isNumeric(blockInfo.timestamp) ? blockInfo.timestamp : parseInt(blockInfo.timestamp)
     } catch (error) {
         throw error
-        // return 0
     }
 }
 
 
-const getCurrentBlockNumber = async (web3): Promise<number> => {
+export const getCurrentBlockNumber = async (web3): Promise<number> => {
     let bNumber = -1
-    await web3.eth.getBlockNumber()
-        .then( res => {
-            res = bNumber
-        })
+    try {
+        bNumber = await web3.eth.getBlockNumber()
+    } catch (error) {
+        throw error
+    }
     return bNumber
 }

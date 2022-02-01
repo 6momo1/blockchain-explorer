@@ -30,14 +30,18 @@ export interface SwapEvent {
 }
 
 export interface Swap {
-  block:number,
+  blockHash: string,
+  blockNumber:number,
   timestamp: number,
+  transactionIndex: number,
   sender: string,
   transactionHash: string,
-  amount0In?: string,
-  amount1In: string,
-  amount0Out: string,
-  amount1Out: string
+  id: string,
+  event: string,
+  amount0In: number,
+  amount1In: number,
+  amount0Out: number,
+  amount1Out: number
 }
 
 export interface SwapResult {

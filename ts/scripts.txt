@@ -32,8 +32,16 @@ UNISWAP V2 Factory:
 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f
 npx ts-node ./index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 14058716 14058723 100 PairCreated uniFactory
 
+Million token:
+taddress 0x6b4c7a5e3f0b99fcd83e9c089bddd6c7fce5c611
+pool 0x6b4c7a5e3f0b99fcd83e9c089bddd6c7fce5c611
+npx ts-node index.ts eth 0x6b4c7a5e3f0b99fcd83e9c089bddd6c7fce5c611 13911535 13912106 100 Swap tokenExchange 0x6b4c7a5e3f0b99fcd83e9c089bddd6c7fce5c611
+
+
 Battle Token:
 7e32e468fbca1bbc85736028c284968f391adbac
-npx ts-node ./index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 13835454 13835456 100 PairCreated uniFactory
+npx ts-node index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 13835454 13835456 100 PairCreated uniFactory
+npx ts-node index.ts eth 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f 13835454 13835456 100 PairCreated uniFactory
+
 
 npx ts-node index eth 0x9A1071d17b8126679Aeca3EF152F784bca339c3A 13910265 13910965 100 Swap tokenExchange

@@ -63,14 +63,18 @@ export async function assembleSwap(
 
     try {
       let swap: Swap = {
-        block: swapEvent.blockNumber,
+        blockNumber: swapEvent.blockNumber,
         timestamp,
         sender,
         transactionHash: swapEvent.transactionHash,
-        amount0In: swapEvent.returnValues.amount0In,
-        amount1In: swapEvent.returnValues.amount1In,
-        amount0Out: swapEvent.returnValues.amount0Out,
-        amount1Out: swapEvent.returnValues.amount1Out,
+        amount0In: parseInt(swapEvent.returnValues.amount0In),
+        amount1In: parseInt(swapEvent.returnValues.amount1In),
+        amount0Out: parseInt(swapEvent.returnValues.amount0Out),
+        amount1Out: parseInt(swapEvent.returnValues.amount1Out),
+        blockHash: swapEvent.blockHash,
+        transactionIndex: swapEvent.transactionIndex,
+        id: swapEvent.id,
+        event:swapEvent.event
       };
       swaps.push(swap);
     } catch (error) {

@@ -151,6 +151,8 @@ async function scanContractEventsTest(logger: Logger) {
     EventType,
     myContract
   );
+  contractEvents.forEach( event => {console.log(event);
+  })
 }
 
 const transactionHashTest = async (web3: Web3) => {
@@ -206,8 +208,8 @@ const main = async () => {
   //   await transactionHashCallerTest(web3)
   //   await transactionHashTest(web3)
   // await getBlockTimestampTest(web3, logger);
-  // await scanContractEventsTest(logger)
-  await fetchTokenInfoTest(web3, logger)
+  await scanContractEventsTest(logger)
+  // await fetchTokenInfoTest(web3, logger)
 };
 
 main();

@@ -1,54 +1,8 @@
-import { SwapEvent } from "./types/types.js";
-import { Logger } from "./logger";
 import Web3 from "web3";
 import { transactionHashCaller } from "./utils/transactionHashInfo";
 import { Swap } from "./types/types.js";
 import { getBlockTimestamp } from "./utils";
-
-/*
-  this function scans the token pool pair contract for all the requested events
-*/
-export async function scanContractEvents(
-  logger: Logger,
-  fromBlock: number,
-  lastBlock: number,
-  BLOCK_STEP = 10,
-  eventType = "allEvents",
-  myContract
-): Promise<SwapEvent[]> {
-  logger.ProgressBar.setLength(0, lastBlock - fromBlock);
-
-  console.log("Scanning Events...");
-
-  const event_list: SwapEvent[] = [];
-  let currentBlock = fromBlock;
-
-  for (; currentBlock < lastBlock; currentBlock += BLOCK_STEP) {
-    await myContract.getPastEvents(
-      eventType,
-      {
-        // filter
-        fromBlock: currentBlock - BLOCK_STEP,
-        toBlock: currentBlock,
-      },
-      function (error, events: SwapEvent[]) {
-        if (error) {
-          logger.ProgressBar.stop();
-          logger.error("error encountered while fetching events");
-          return event_list;
-        }
-        // logger.debug("contract Events", events)
-        
-        logger.ProgressBar.increment(BLOCK_STEP);
-        events.forEach((e) => {
-          event_list.push(e);
-        });
-      }
-    );
-  }
-  logger.ProgressBar.stop();
-  return event_list;
-}
+import { SwapEvent } from "./types/types.js";
 
 /**
  * this function organazes the results from ScanContractEvents into a more readable 

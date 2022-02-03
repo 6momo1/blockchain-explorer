@@ -5,6 +5,7 @@ import { Logger } from "../src/logger";
 import { DatabaseClient } from "../src/database.client";
 import { Swap, TokenInfo } from "../src/types/types";
 import { STRONG_ADDRESS } from '../constants'
+import {fetchTokenSwaps} from '../src/utils/fetchTokenSwaps'
 
 describe("Fetching $STRONG info", () => {
   let web3: Web3;
@@ -30,6 +31,7 @@ describe("Fetching $STRONG info", () => {
   };
 
   it("Should return a list of $STRONG token swaps", async () => {
-    const swaps:Swap[] = await fetchTokenSwaps(web3, "0x990f341946a3fdb507ae7e52d17851b87168017c")
+    contractCreationBlock = 
+    const swaps:Swap[] = await fetchTokenSwaps(web3, logger, STRONG_ADDRESS, )
   });
 });

@@ -3,24 +3,24 @@ import { Logger } from "./logger";
 import { Contract, EventData } from "web3-eth-contract";
 
 /*
-  this function scans the token pool pair contract for all the requested events
+  this function scans the token pool pair contract for a specific event input
 */
 export async function scanContractEvents(
   logger: Logger,
   fromBlock: number,
-  lastBlock: number,
+  toBlock: number,
   BLOCK_STEP = 10,
   eventType = "allEvents",
   myContract: Contract
 ): Promise<EventData[]> {
-  logger.ProgressBar.setLength(0, lastBlock - fromBlock);
+  logger.ProgressBar.setLength(0, toBlock - fromBlock);
 
-  console.log("Scanning Events...");
+  logger.info(`Scanning events...`)
 
   const event_list: EventData[] = [];
   let currentBlock = fromBlock;
 
-  for (; currentBlock < lastBlock; currentBlock += BLOCK_STEP) {
+  for (; currentBlock < toBlock; currentBlock += BLOCK_STEP) {
     await myContract.getPastEvents(
       eventType,
       {

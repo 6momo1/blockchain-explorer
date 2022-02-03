@@ -1,13 +1,12 @@
 import Web3 from 'web3'
 
-async function search_contract_cretion_block(contract_address) {
+export async function searchContractCreationBlock(web3:Web3, contract_address:string):Promise<number> {
     var highest_block = await web3.eth.getBlockNumber();
     var lowest_block = 0;
 
     var contract_code = await web3.eth.getCode(contract_address, highest_block);
     if (contract_code == "0x") {
-        console.error("Contract " + contract_address + " does not exist!");
-        return -1;
+        throw new Error("Contract " + contract_address + " does not exist!")
     }
 
     while (lowest_block <= highest_block) {
@@ -29,16 +28,16 @@ async function search_contract_cretion_block(contract_address) {
 
 }
 
-async function search_contract_creator (contract_address, block) {
-    var block = await web3.eth.getBlock(block);
+export async function search_contract_creator (web3:Web3, contract_address:string, blockNumber:number) {
+    let block = await web3.eth.getBlock(blockNumber);
 
-    var transactions = block.transactions;
+    let transactions = block.transactions;
 
-    for (transaction in transactions) {
+    let creator = -1
+    for (let i = 0; i < transactions.length; i++) {
+        const transaction = transactions[i];
         let receipt = await web3.eth.getTransactionReceipt(transactions[transaction]);
-
-        //console.log(receipt);
-
+        
         if (receipt.contractAddress == contract_address) {
             return receipt.from
         }
@@ -47,8 +46,8 @@ async function search_contract_creator (contract_address, block) {
     return -1;
 }
 
-async function find_contract_creator (contract_address) {
-    var block = await search_contract_cretion_block(contract_address);
-    var creator = await search_contract_creator(contract_address, block);
+export async function find_contract_creator (web3:Web3, contract_address) {
+    var block = await searchContractCreationBlock(web3,contract_address);
+    var creator = await search_contract_creator(web3,contract_address, block);
     return creator;
 }

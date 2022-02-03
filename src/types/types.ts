@@ -37,7 +37,6 @@ export interface Swap {
   timestamp?: number,
   transactionIndex: number,
   sender: string,
-  id: string,
   event: string,
   amount0In: number,
   amount1In: number,
@@ -66,5 +65,7 @@ export interface TokenInfo {
   symbol:string,
   totalSupply:number,
   tokenAddress:string,
-  poolAddress: string, // must consider multiple pools for one token
+  WETHPairAddress: string, 
+  USDCPairAddress: string, 
+  USDTPairAddress: string,
 }

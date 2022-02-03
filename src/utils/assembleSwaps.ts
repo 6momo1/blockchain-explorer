@@ -1,17 +1,16 @@
 import Web3 from "web3";
-import { transactionHashCaller } from "./utils/transactionHashInfo";
-import { Swap } from "./types/types.js";
-import { getBlockTimestamp } from "./utils";
-import { SwapEvent } from "./types/types.js";
+import { transactionHashCaller } from "./transactionHashInfo";
+import { Swap } from "../types/types.js";
+import { EventData } from "web3-eth-contract";
 
 /**
  * this function organazes the results from ScanContractEvents into a more readable 
  * Swap Transaction.
  * this should only be called to assemble Swap events only
  */
-export async function assembleSwap(
+export async function assembleSwaps(
   web3: Web3,
-  swapEvents: SwapEvent[],
+  swapEvents: EventData[],
   poolAddress: string,
 ): Promise<Swap[]> {
     
@@ -40,7 +39,6 @@ export async function assembleSwap(
         amount1Out: parseInt(swapEvent.returnValues.amount1Out),
         blockHash: swapEvent.blockHash,
         transactionIndex: swapEvent.transactionIndex,
-        id: swapEvent.id,
         event:swapEvent.event
       };
       swaps.push(swap);

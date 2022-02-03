@@ -13,8 +13,6 @@ describe("Fetching $STRONG info", () => {
     web3 = new Web3(process.env["ETH_ENDPOINT_URL2"]);
     logger = new Logger("debug");
     databaseClient = new DatabaseClient(logger);
-    console.log(process.env.TEST);
-    
   });
 
   test("Should return connection status", async () => {

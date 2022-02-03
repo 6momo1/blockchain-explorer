@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+
 async function search_contract_cretion_block(contract_address) {
     var highest_block = await web3.eth.getBlockNumber();
     var lowest_block = 0;
@@ -10,7 +11,7 @@ async function search_contract_cretion_block(contract_address) {
     }
 
     while (lowest_block <= highest_block) {
-        let search_block = parseInt((lowest_block + highest_block) / 2)
+        let search_block = ((lowest_block + highest_block) / 2)
         contract_code = await web3.eth.getCode(contract_address, search_block);
 
         //console.log(highest_block, lowest_block, search_block, contract_code);

@@ -2,11 +2,15 @@ import Web3 from "web3";
 import dotenv from "dotenv";
 import { Logger } from "../src/logger";
 import { DatabaseClient } from "../src/database.client";
-import { scanContractEvents } from "../src/scanContractEvents";
-import { createContract } from "../src/utils/createContract";
-import { Contract } from "web3-eth-contract";
-import { STRONG_ADDRESS, STRONG_POOL_ADDRESS, WETH_ADDRESS } from '../constants'
-import { getUniswapPairContract } from "../src/utils/getPairAddress";
+import {
+  STRONG_ADDRESS,
+  STRONG_POOL_ADDRESS,
+  USDC_ADDRESS,
+  USDT_ADDRESS,
+  WETH_ADDRESS,
+  ZERO_ADDRESS,
+} from "../constants";
+import { getUniswapPairAddress } from "../src/utils/getPairAddress";
 
 describe("Fetching $STRONG info", () => {
   let web3: Web3;
@@ -20,8 +24,30 @@ describe("Fetching $STRONG info", () => {
     databaseClient = new DatabaseClient(logger);
   });
 
-  it("Should get $STRONG $WETH pair contract", async () => {
-    const pairAddress = await getUniswapPairContract(web3, STRONG_ADDRESS, WETH_ADDRESS)
-    expect(pairAddress.toLowerCase()).toBe(STRONG_POOL_ADDRESS.toLowerCase())
+  it("Should get $STRONG $WETH pair address", async () => {
+    const pairAddress = await getUniswapPairAddress(
+      web3,
+      STRONG_ADDRESS,
+      WETH_ADDRESS
+    );
+    expect(pairAddress.toLowerCase()).toBe(STRONG_POOL_ADDRESS.toLowerCase());
+  });
+
+  it("Should get $STRONG $USDC pair address", async () => {
+    const pairAddress = await getUniswapPairAddress(
+      web3,
+      STRONG_ADDRESS,
+      USDC_ADDRESS
+    );
+    expect(pairAddress.toLowerCase()).toBe(ZERO_ADDRESS.toLowerCase());
+  });
+
+  it("Should get $STRONG $USDT pair address", async () => {
+    const pairAddress = await getUniswapPairAddress(
+      web3,
+      STRONG_ADDRESS,
+      USDT_ADDRESS
+    );
+    expect(pairAddress.toLowerCase()).toBe(ZERO_ADDRESS.toLowerCase());
   });
 });

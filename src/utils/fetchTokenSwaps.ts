@@ -5,7 +5,7 @@ import { fetchTokenInfo } from "./fetchTokenInfo";
 import { Logger } from "../logger";
 import { createContract } from "./createContract";
 import { assembleSwaps } from "./assembleSwaps";
-
+import web3 from "web3"
 export async function fetchTokenSwaps(
   web3: Web3,
   logger: Logger,
@@ -13,6 +13,7 @@ export async function fetchTokenSwaps(
   fromBlock: number,
   toBlock: number
 ): Promise<Swap[]> {
+  
   let swaps: Swap[] = [];
   const tokenInfo = await fetchTokenInfo(web3, tokenAddress);
   const tokenWETHPairContract = await createContract(

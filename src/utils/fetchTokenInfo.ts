@@ -3,7 +3,7 @@ import { ERC20_FULL_ABI } from "../constants/abis";
 import { AbiItem } from "web3-utils";
 import { TokenInfo } from "../types/types";
 import { getUniswapPairAddress } from "./getPairAddress";
-import { USDC_ADDRESS, USDT_ADDRESS, WETH_ADDRESS } from "../../constants";
+import { USDC_ADDRESS, USDT_ADDRESS, WETH_ADDRESS } from "../constants";
 
 export async function fetchTokenInfo(
   web3: Web3,

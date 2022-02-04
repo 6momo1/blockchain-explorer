@@ -8,13 +8,15 @@ import {
 import dotenv from "dotenv";
 import { Logger } from "./logger";
 import { Swap, TokenInfo } from "./types/types";
-import { getBlockTimestamp } from "./utils";
+import { getBlockTimestamp, sleep } from "./utils";
 import { DatabaseClient } from "./database.client";
 import { fetchTokenInfo } from "./utils/fetchTokenInfo";
 import { searchAddressFirstTx } from "./utils/findContractCreator";
-import { STRONG_ADDRESS } from "../constants";
+import { STRONG_ADDRESS, USDC_WETH_PAIR } from "./constants";
 import { scanContractEvents } from "./scanContractEvents";
 import { assembleSwaps } from "./utils/assembleSwaps";
+import { ContractSubscription } from "./utils/subscribeToSwaps";
+import { TokenPoolEvents } from "./constants/enums";
 
 dotenv.config()
 
@@ -142,7 +144,16 @@ async function fetchTokenInfoTest(web3: Web3, logger: Logger) {
 async function searchAddressFirstTxTest(web3:Web3) {
   const res  = await searchAddressFirstTx(STRONG_ADDRESS)
   console.log(res);
+}
+
+function subscribeToSwaps(logger:Logger) {
+  dotenv.config()
+  console.log(process.env["ETH_ENDPOINT_URL2"]);
   
+  const web3 = new Web3(process.env["WSS_ETH_ENDPOINT"])
+  
+  const subscription = new ContractSubscription(web3, logger, USDC_WETH_PAIR, Object.values(TokenPoolEvents))
+  sleep(1000 * 60 * 3)
 }
 const main = async () => {
   let web3 = new Web3(process.env["ETH_ENDPOINT_URL2"])
@@ -158,7 +169,9 @@ const main = async () => {
   // await getBlockTimestampTest(web3, logger);
   // await scanContractEventsTest(logger)
   // await fetchTokenInfoTest(web3, logger)
-  searchAddressFirstTxTest(web3)
+  // searchAddressFirstTxTest(web3)
+  subscribeToSwaps(logger)
+
 };
 
 main();

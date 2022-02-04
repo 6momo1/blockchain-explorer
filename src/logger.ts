@@ -1,5 +1,4 @@
-import Debug from "debug";
-import winston, { level, format } from "winston"
+import winston, { level as Level, format } from "winston"
 // import { ProgressBar } from "./progressBar";
 
 import cliProgress from 'cli-progress'
@@ -11,7 +10,7 @@ export class Logger {
     private flatLogger: winston.Logger
     // private progressBar: ProgressBar
 
-    constructor(level: level) {
+    constructor(level: typeof Level) {
 
         const myFormat = printf(({ level, message }) => {
             return `[${level}]: ${message}`;
@@ -41,7 +40,7 @@ export class Logger {
         })
     }
 
-    info(context, value=null) {
+    info(context:string, value:any=null) {
         this.logger.info(context)
 
         if (value) {
@@ -49,7 +48,7 @@ export class Logger {
         }
     }
 
-    debug(context, value=null) {
+    debug(context:string, value:any=null) {
         this.logger.debug(context)
 
         if (value) {
@@ -57,7 +56,7 @@ export class Logger {
         }
     }
     
-    error(context, value=null) {
+    error(context:string, value:any=null) {
         this.logger.error(context)
 
         if (value) {

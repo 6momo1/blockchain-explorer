@@ -1,6 +1,5 @@
 import Web3 from "web3";
 import { TOKEN_PAIR_POOL_ABI, UNISWAP_FACTORY_ABI } from "./constants/abis";
-import { assembleSwap, scanContractEvents } from "./event_scanner";
 import { AbiItem } from "web3-utils";
 import {
   transactionHashCaller,
@@ -8,10 +7,14 @@ import {
 } from "./utils/transactionHashInfo";
 import dotenv from "dotenv";
 import { Logger } from "./logger";
-import { Swap } from "./types/types";
+import { Swap, TokenInfo } from "./types/types";
 import { getBlockTimestamp } from "./utils";
 import { DatabaseClient } from "./database.client";
 import { fetchTokenInfo } from "./utils/fetchTokenInfo";
+import { searchAddressFirstTx } from "./utils/findContractCreator";
+import { STRONG_ADDRESS } from "../constants";
+import { scanContractEvents } from "./scanContractEvents";
+import { assembleSwaps } from "./utils/assembleSwaps";
 
 dotenv.config()
 
@@ -84,7 +87,7 @@ const scanContractEventsAndAssembleTest = async (logger: Logger) => {
 
   // swapEvents.forEach(swap => console.log(swap))
   // in this case, ADDRESS is the pool address
-  const swaps = await assembleSwap(web3, swapEvents, ADDRESS);
+  const swaps = await assembleSwaps(web3, swapEvents, ADDRESS);
   //   logger.debug("swaps:",swaps)
   const databaseClient = new DatabaseClient(logger);
 
@@ -121,7 +124,7 @@ const loggerTest = (logger: Logger) => {
 
 const getBlockTimestampTest = async (web3: Web3, logger: Logger) => {
   const timestamp: number = await getBlockTimestamp(web3, 130000);
-  logger.info(timestamp);
+  logger.info("timestamp", timestamp);
 };
 
 async function databaseTest(databaseClient: DatabaseClient) {
@@ -129,14 +132,18 @@ async function databaseTest(databaseClient: DatabaseClient) {
 }
 
 async function fetchTokenInfoTest(web3: Web3, logger: Logger) {
-  const tokenInfo = await fetchTokenInfo(
+  const tokenInfo:TokenInfo = await fetchTokenInfo(
     web3,
-    "0x9010a15184da16e3a7c5b4aa50094dfe3bb36989",
-    "0x9A1071d17b8126679Aeca3EF152F784bca339c3A"
+    STRONG_ADDRESS
   );
   logger.info("token Info", tokenInfo);
 }
 
+async function searchAddressFirstTxTest(web3:Web3) {
+  const res  = await searchAddressFirstTx(STRONG_ADDRESS)
+  console.log(res);
+  
+}
 const main = async () => {
   let web3 = new Web3(process.env["ETH_ENDPOINT_URL2"])
   const logger = new Logger("debug");
@@ -145,12 +152,13 @@ const main = async () => {
   // console.log(await web3.eth.getBlockNumber());
   //   databaseTest(databaseClient)
   // loggerTest(logger)
-    await scanContractEventsAndAssembleTest(logger);
+    // await scanContractEventsAndAssembleTest(logger);
     // await transactionHashCallerTest(web3)
   //   await transactionHashTest(web3)
   // await getBlockTimestampTest(web3, logger);
   // await scanContractEventsTest(logger)
   // await fetchTokenInfoTest(web3, logger)
+  searchAddressFirstTxTest(web3)
 };
 
 main();

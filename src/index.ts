@@ -6,8 +6,8 @@ import {
   transactionHashInfo,
 } from "./utils/transactionHashInfo";
 import dotenv from "dotenv";
-import { Logger } from "./logger";
-import { Swap, TokenInfo } from "./types/types";
+import logger, { Logger } from "./externalClients/logger";
+import { EtherscanTransaction, Swap, TokenInfo } from "./types/types";
 import { getBlockTimestamp, sleep } from "./utils";
 import { DatabaseClient } from "./database.client";
 import { fetchTokenInfo } from "./utils/fetchTokenInfo";
@@ -17,8 +17,9 @@ import { scanContractEvents } from "./scanContractEvents";
 import { assembleSwaps } from "./utils/assembleSwaps";
 import { ContractSubscription, subscribeLogs } from "./utils/subscribeToSwaps";
 import { TokenPoolEvents } from "./constants/enums";
-import { wssWeb3 } from "./externalClients/web3Client";
+import { web3, wssWeb3 } from "./externalClients/web3Client";
 import { createContract } from "./utils/createContract";
+import { fetchTokenSwaps } from "./utils/fetchTokenSwaps";
 
 dotenv.config();
 
@@ -92,7 +93,7 @@ const scanContractEventsAndAssembleTest = async (logger: Logger) => {
   // in this case, ADDRESS is the pool address
   const swaps = await assembleSwaps(web3, swapEvents, ADDRESS);
   //   logger.debug("swaps:",swaps)
-  const databaseClient = new DatabaseClient(logger);
+  const databaseClient = new DatabaseClient();
 
   databaseClient.writeTokenSwaps(swaps);
 };
@@ -158,14 +159,39 @@ async function subscribeToSwaps(logger: Logger, address: string) {
     .on("error", console.error);
 }
 
+async function run() {
+  
+  let contractCreationBlock: EtherscanTransaction;
+  const TRIES = 5;
+
+  for (let i = 0; i < TRIES; i++) {
+    try {
+      contractCreationBlock = await searchAddressFirstTx(STRONG_ADDRESS);
+      console.log(contractCreationBlock);
+      
+      break;
+    } catch (error) {
+      // console.log(error);
+      throw new Error(
+        "Failed to search address's first transaction with Etherscan API."
+      );
+    }
+  }
+  const currentBlockNumber = await web3.eth.getBlockNumber();
+  const swaps: Swap[] = await fetchTokenSwaps(
+    web3,
+    STRONG_ADDRESS,
+    parseInt(contractCreationBlock.blockNumber),
+    currentBlockNumber
+  );
+}
+
 const main = async () => {
-  dotenv.config({ path: __dirname + "../.env" });
-  // expect(process.env.WSS_ETH_ENDPOINT).toBeDefined()
+  dotenv.config();
   console.log(process.env.WSS_ETH_ENDPOINT);
 
-  const logger = new Logger("debug");
-  const databaseClient = new DatabaseClient(logger);
-
+  const databaseClient = new DatabaseClient();
+  run()
   // console.log(await web3.eth.getBlockNumber());
   //   databaseTest(databaseClient)
   // loggerTest(logger)
@@ -176,7 +202,7 @@ const main = async () => {
   // await scanContractEventsTest(logger)
   // await fetchTokenInfoTest(web3, logger)
   // searchAddressFirstTxTest(web3)
-  subscribeToSwaps(logger, USDC_WETH_PAIR);
+  // subscribeToSwaps(logger, USDC_WETH_PAIR);
 };
 
 main();

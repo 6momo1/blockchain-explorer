@@ -1,14 +1,10 @@
 
 
 import fs, { appendFile } from "fs";
-import { Logger } from "./logger";
+import logger from "./externalClients/logger";
 import { Swap } from "./types/types";
 
 export class DatabaseClient {
-  private logger: Logger;
-  constructor(logger: Logger) {
-    this.logger = logger;
-  }
 
   read() {}
 
@@ -23,7 +19,7 @@ export class DatabaseClient {
     );
     fs.writeFile("./logs/tokenSwaps.json", data, (err) => {
       if (err) throw err;
-      this.logger.debug("Data written to file");
+      logger.debug("Data written to file");
     });
 }
 
@@ -31,7 +27,7 @@ export class DatabaseClient {
     let data = JSON.stringify({ block, timestamp }, null, 2);
     fs.writeFile("timestampCache.json", data, (err) => {
       if (err) throw err;
-      this.logger.debug("Data written to file");
+      logger.debug("Data written to file");
     });
   }
 }

@@ -4,7 +4,8 @@ import winston, { level as Level, format } from "winston"
 import cliProgress from 'cli-progress'
 import colors from 'ansi-colors'
 const { combine, timestamp, label, printf } = format;
-export class Logger {
+
+class Logger {
 
     private logger: winston.Logger
     private flatLogger: winston.Logger
@@ -96,3 +97,7 @@ export class Logger {
         
     }
 }
+
+const logger = new Logger("debug")
+
+export default logger

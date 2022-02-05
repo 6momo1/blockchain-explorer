@@ -1,17 +1,15 @@
 import Web3 from "web3";
-import { Logger } from "../logger";
+import logger from "../externalClients/logger";
 import { Log, LogsOptions } from "web3-core/types";
 import { Subscription } from "web3-core-subscriptions";
 
 export class ContractSubscription {
   private web3: Web3;
-  private logger: Logger;
   private address: string;
   private subscription;
 
-  constructor(web3, logger: Logger, address: string, topics: string[]) {
+  constructor(web3, address: string, topics: string[]) {
     this.web3 = web3;
-    this.logger = logger;
     let options = {
       address,
       topics,

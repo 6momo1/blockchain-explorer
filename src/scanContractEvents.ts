@@ -1,12 +1,11 @@
 import { SwapEvent } from "./types/types.js";
-import { Logger } from "./logger";
+import logger from "./externalClients/logger";
 import { Contract, EventData } from "web3-eth-contract";
 
 /*
   this function scans the token pool pair contract for a specific event input
 */
 export async function scanContractEvents(
-  logger: Logger,
   fromBlock: number,
   toBlock: number,
   BLOCK_STEP = 10,

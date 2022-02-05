@@ -15,11 +15,12 @@ import { searchAddressFirstTx } from "./utils/findContractCreator";
 import { STRONG_ADDRESS, USDC_WETH_PAIR } from "./constants";
 import { scanContractEvents } from "./scanContractEvents";
 import { assembleSwaps } from "./utils/assembleSwaps";
-import { ContractSubscription } from "./utils/subscribeToSwaps";
+import { ContractSubscription, subscribeLogs } from "./utils/subscribeToSwaps";
 import { TokenPoolEvents } from "./constants/enums";
+import { wssWeb3 } from "./externalClients/web3Client";
+import { createContract } from "./utils/createContract";
 
-dotenv.config()
-
+dotenv.config();
 
 const scanContractEventsAndAssembleTest = async (logger: Logger) => {
   // get arguments
@@ -96,7 +97,6 @@ const scanContractEventsAndAssembleTest = async (logger: Logger) => {
   databaseClient.writeTokenSwaps(swaps);
 };
 
-
 const transactionHashTest = async (web3: Web3) => {
   const tHashObj = await transactionHashInfo(
     web3,
@@ -114,7 +114,7 @@ const transactionHashCallerTest = async (web3: Web3) => {
   tHashSender = await transactionHashCaller(
     web3,
     "0x1551c23ecd1a10d20075b5f4e708f39a8c1d4ccdf2b79e6beaa44ccc1c46d527"
-  )
+  );
   console.log(tHashSender);
 };
 
@@ -134,44 +134,49 @@ async function databaseTest(databaseClient: DatabaseClient) {
 }
 
 async function fetchTokenInfoTest(web3: Web3, logger: Logger) {
-  const tokenInfo:TokenInfo = await fetchTokenInfo(
-    web3,
-    STRONG_ADDRESS
-  );
+  const tokenInfo: TokenInfo = await fetchTokenInfo(web3, STRONG_ADDRESS);
   logger.info("token Info", tokenInfo);
 }
 
-async function searchAddressFirstTxTest(web3:Web3) {
-  const res  = await searchAddressFirstTx(STRONG_ADDRESS)
+async function searchAddressFirstTxTest(web3: Web3) {
+  const res = await searchAddressFirstTx(STRONG_ADDRESS);
   console.log(res);
 }
 
-function subscribeToSwaps(logger:Logger) {
-  dotenv.config()
-  console.log(process.env["ETH_ENDPOINT_URL2"]);
-  
-  const web3 = new Web3(process.env["WSS_ETH_ENDPOINT"])
-  
-  const subscription = new ContractSubscription(web3, logger, USDC_WETH_PAIR, Object.values(TokenPoolEvents))
-  sleep(1000 * 60 * 3)
+async function subscribeToSwaps(logger: Logger, address: string) {
+  const web3 = new Web3(process.env.WSS_ETH_ENDPOINT);
+  const contract = await createContract(web3, USDC_WETH_PAIR, "tokenPool");
+
+  contract.events
+    .Swap({ fromBlock: 0 })
+    .on("connected", function (subscriptionId) {
+      console.log(subscriptionId);
+    })
+    .on("data", function (data) {
+      console.log(data);
+    })
+    .on("error", console.error);
 }
+
 const main = async () => {
-  let web3 = new Web3(process.env["ETH_ENDPOINT_URL2"])
+  dotenv.config({ path: __dirname + "../.env" });
+  // expect(process.env.WSS_ETH_ENDPOINT).toBeDefined()
+  console.log(process.env.WSS_ETH_ENDPOINT);
+
   const logger = new Logger("debug");
   const databaseClient = new DatabaseClient(logger);
 
   // console.log(await web3.eth.getBlockNumber());
   //   databaseTest(databaseClient)
   // loggerTest(logger)
-    // await scanContractEventsAndAssembleTest(logger);
-    // await transactionHashCallerTest(web3)
+  // await scanContractEventsAndAssembleTest(logger);
+  // await transactionHashCallerTest(web3)
   //   await transactionHashTest(web3)
   // await getBlockTimestampTest(web3, logger);
   // await scanContractEventsTest(logger)
   // await fetchTokenInfoTest(web3, logger)
   // searchAddressFirstTxTest(web3)
-  subscribeToSwaps(logger)
-
+  subscribeToSwaps(logger, USDC_WETH_PAIR);
 };
 
 main();

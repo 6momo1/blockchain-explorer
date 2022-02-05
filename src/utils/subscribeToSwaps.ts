@@ -1,5 +1,7 @@
 import Web3 from "web3";
 import { Logger } from "../logger";
+import { Log, LogsOptions } from "web3-core/types";
+import { Subscription } from "web3-core-subscriptions";
 
 export class ContractSubscription {
   private web3: Web3;
@@ -19,11 +21,23 @@ export class ContractSubscription {
         if (!error) console.log("result:", result);
         else console.log(error);
       })
-      .on("data", log => {
+      .on("data", (log) => {
         console.log("got data", log);
       })
       .on("changed", function (log) {
         console.log("changed");
       });
   }
+}
+
+export function subscribeLogs(
+  web3:Web3,
+  address: string,
+  topics: string[]
+): Subscription<Log> {
+  return web3.eth.subscribe("logs", {
+    fromBlock: "latest",
+    address,
+    topics,
+  });
 }

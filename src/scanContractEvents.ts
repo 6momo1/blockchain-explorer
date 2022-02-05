@@ -16,7 +16,8 @@ export async function scanContractEvents(
 
   logger.info(`Scanning events...`)
 
-  const event_list: EventData[] = [];
+  const eventData: EventData[] = [];
+  const temp:any[] = []
   let currentBlock = fromBlock;
 
   for (; currentBlock < toBlock; currentBlock += BLOCK_STEP) {
@@ -26,7 +27,7 @@ export async function scanContractEvents(
         fromBlock: currentBlock - BLOCK_STEP,
         toBlock: currentBlock,
       },
-      function (error, event: EventData) {
+      function (error, events) {
         if (error) {
           logger.ProgressBar.stop();
           logger.error("error encountered while fetching events");
@@ -34,10 +35,25 @@ export async function scanContractEvents(
         }
         // logger.debug("contract Events", events)
         logger.ProgressBar.increment(BLOCK_STEP);
-          event_list.push(event);
+        // console.log(event);
+        
+          temp.push(events);
       }
     );
   }
+
+  temp.forEach (eventList => {
+    console.log("eventList.length",eventList.length);
+
+    eventList.forEach(event => {
+      eventData.push(event)
+
+    });
+  })
+  console.log("temp.length",temp.length);
+  
+  console.log("event Data lenght", eventData.length);
+  
   logger.ProgressBar.stop();
-  return event_list;
+  return eventData;
 }

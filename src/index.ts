@@ -6,7 +6,6 @@ import {
   transactionHashInfo,
 } from "./utils/transactionHashInfo";
 import dotenv from "dotenv";
-import logger, { Logger } from "./externalClients/logger";
 import { EtherscanTransaction, Swap, TokenInfo } from "./types/types";
 import { getBlockTimestamp, sleep } from "./utils";
 import { DatabaseClient } from "./database.client";
@@ -20,10 +19,12 @@ import { TokenPoolEvents } from "./constants/enums";
 import { web3, wssWeb3 } from "./externalClients/web3Client";
 import { createContract } from "./utils/createContract";
 import { fetchTokenSwaps } from "./utils/fetchTokenSwaps";
+import databaseClient from "./externalClients/databaseClient";
+import logger from "./externalClients/logger";
 
 dotenv.config();
 
-const scanContractEventsAndAssembleTest = async (logger: Logger) => {
+const scanContractEventsAndAssembleTest = async () => {
   // get arguments
   const args = process.argv.slice(2);
   const chainSelected = args[0].toLowerCase();
@@ -81,7 +82,6 @@ const scanContractEventsAndAssembleTest = async (logger: Logger) => {
 
   // scan for events
   const swapEvents = await scanContractEvents(
-    logger,
     fromBlock,
     toBlock,
     BLOCK_STEP,
@@ -119,13 +119,13 @@ const transactionHashCallerTest = async (web3: Web3) => {
   console.log(tHashSender);
 };
 
-const loggerTest = (logger: Logger) => {
+const loggerTest = () => {
   logger.debug("Debugging", { obj: "debug" });
   logger.debug("Debugging");
   logger.info("infoing", { asss: "asdfad" });
 };
 
-const getBlockTimestampTest = async (web3: Web3, logger: Logger) => {
+const getBlockTimestampTest = async (web3: Web3) => {
   const timestamp: number = await getBlockTimestamp(web3, 130000);
   logger.info("timestamp", timestamp);
 };
@@ -134,7 +134,7 @@ async function databaseTest(databaseClient: DatabaseClient) {
   databaseClient.writeTokenSwaps([]);
 }
 
-async function fetchTokenInfoTest(web3: Web3, logger: Logger) {
+async function fetchTokenInfoTest(web3: Web3) {
   const tokenInfo: TokenInfo = await fetchTokenInfo(web3, STRONG_ADDRESS);
   logger.info("token Info", tokenInfo);
 }
@@ -144,7 +144,7 @@ async function searchAddressFirstTxTest(web3: Web3) {
   console.log(res);
 }
 
-async function subscribeToSwaps(logger: Logger, address: string) {
+async function subscribeToSwaps(address: string) {
   const web3 = new Web3(process.env.WSS_ETH_ENDPOINT);
   const contract = await createContract(web3, USDC_WETH_PAIR, "tokenPool");
 
@@ -160,30 +160,35 @@ async function subscribeToSwaps(logger: Logger, address: string) {
 }
 
 async function run() {
-  
   let contractCreationBlock: EtherscanTransaction;
   const TRIES = 5;
 
-  for (let i = 0; i < TRIES; i++) {
-    try {
-      contractCreationBlock = await searchAddressFirstTx(STRONG_ADDRESS);
-      console.log(contractCreationBlock);
-      
-      break;
-    } catch (error) {
-      // console.log(error);
-      throw new Error(
-        "Failed to search address's first transaction with Etherscan API."
-      );
-    }
-  }
-  const currentBlockNumber = await web3.eth.getBlockNumber();
+  // for (let i = 0; i < TRIES; i++) {
+  //   await searchAddressFirstTx(STRONG_ADDRESS)
+  //     .then((res) => {
+  //       contractCreationBlock = res;
+  //       console.log(res);
+  //       return
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       // throw new Error("Failed to ")
+  //     });
+  // }
+
+  const currentBlockNumber = await web3.eth.getBlockNumber().catch((error) => {
+    console.log(error);
+    throw new Error("Failed to get current block number");
+  });
+
   const swaps: Swap[] = await fetchTokenSwaps(
     web3,
     STRONG_ADDRESS,
-    parseInt(contractCreationBlock.blockNumber),
+    // parseInt(contractCreationBlock.blockNumber), // fetches swaps from the very beggining of token creation
+    currentBlockNumber - 1000,
     currentBlockNumber
   );
+  databaseClient.writeTokenSwaps(swaps);
 }
 
 const main = async () => {
@@ -191,7 +196,7 @@ const main = async () => {
   console.log(process.env.WSS_ETH_ENDPOINT);
 
   const databaseClient = new DatabaseClient();
-  run()
+  run();
   // console.log(await web3.eth.getBlockNumber());
   //   databaseTest(databaseClient)
   // loggerTest(logger)

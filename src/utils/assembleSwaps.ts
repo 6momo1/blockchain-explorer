@@ -10,18 +10,27 @@ import { EventData } from "web3-eth-contract";
  */
 export async function assembleSwaps(
   web3: Web3,
-  swapEvents: EventData[],
+  swapEvents: any[], // wrong type
   poolAddress: string,
 ): Promise<Swap[]> {
     
   let swaps: Swap[] = [];
 
+  if (swapEvents.length < 1) return swaps;
+
+
   for (let i = 0; i < swapEvents.length; i++) {
 
+
     const swapEvent = swapEvents[i];
+    if (!swapEvent ) continue    
 
     // find a better to find out the transaction sender so we dont have to make another request
-    const sender = await transactionHashCaller(web3, swapEvent.transactionHash);
+
+    const sender = await transactionHashCaller(web3, swapEvent.transactionHash).catch( err => {
+      console.log(err);
+      throw new Error("Failed to get transaction hash caller.")
+    })
     
     // timestamp is optional
     // let timestamp:number = await getBlockTimestamp(web3, swapEvent.blockNumber);
@@ -44,8 +53,11 @@ export async function assembleSwaps(
       swaps.push(swap);
     } catch (error) {
       console.log(error);
+      throw new Error(`Failed to assemble swaps for pool address ${poolAddress}`)
     }
   }
 
+  console.log("assemble swaps length", swaps.length);
+  
   return swaps;
 }

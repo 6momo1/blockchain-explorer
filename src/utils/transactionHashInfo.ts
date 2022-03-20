@@ -1,7 +1,5 @@
-import { isAssertClause } from "typescript"
 import Web3 from "web3"
 import { Transaction } from "web3-eth"
-import logger from "../externalClients/logger"
 
 
 export const transactionHashInfo = async (web3: Web3, transactionHash: string): Promise<Transaction> => {

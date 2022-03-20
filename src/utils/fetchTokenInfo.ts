@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { ERC20_FULL_ABI } from "../constants/abis";
+import { ERC20_FULL_ABI } from "../abis";
 import { AbiItem } from "web3-utils";
 import { TokenInfo } from "../types/types";
 import { getUniswapPairAddress } from "./getPairAddress";

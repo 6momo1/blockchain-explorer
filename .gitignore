@@ -1,6 +1,4 @@
 build
-./build
-./build/*
-/node_modules
 node_modules/*
 build/*
+build/
